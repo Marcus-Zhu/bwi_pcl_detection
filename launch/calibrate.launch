@@ -1,0 +1,9 @@
+<launch>
+
+<node pkg="pcl_detection" type="calibrate_floor" name="calibrate_floor" output="screen">
+<param name="launch_pcl_viewer" value="true" />
+<param name="ground_coeff_file" value="ground_coeff.txt" />
+
+</node>
+
+</launch>

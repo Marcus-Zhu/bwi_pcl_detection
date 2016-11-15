@@ -1,0 +1,6 @@
+<launch>
+
+<node pkg="pcl_detection" type="cloudtest" name="cloudtest" output="screen" launch-prefix="gdb -ex run --args">
+</node>
+
+</launch>
