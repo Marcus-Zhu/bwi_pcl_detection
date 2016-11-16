@@ -1,45 +1,6 @@
 /*
- * Software License Agreement (BSD License)
- *
- * Point Cloud Library (PCL) - www.pointclouds.org
- * Copyright (c) 2013-, Open Perception, Inc.
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * * Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above
- * copyright notice, this list of conditions and the following
- * disclaimer in the documentation and/or other materials provided
- * with the distribution.
- * * Neither the name of the copyright holder(s) nor the names of its
- * contributors may be used to endorse or promote products derived
- * from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * main_ground_based_people_detection_app.cpp
- * Created on: Nov 30, 2012
  * Author: Matteo Munaro
  *
- * Example file for performing people detection on a Kinect live stream.
- * As a first step, the ground is manually initialized, then people detection is performed with the GroundBasedPeopleDetectionApp class,
- * which implements the people detection algorithm described here:
  * M. Munaro, F. Basso and E. Menegatti,
  * Tracking people within groups with RGB-D data,
  * In Proceedings of the International Conference on Intelligent Robots and Systems (IROS) 2012, Vilamoura (Portugal), 2012.
@@ -85,7 +46,7 @@ typedef pcl::PointCloud<PointT> PointCloudT;
 #include "utils/pcl_utils.h"
  
 //the srv
-#include "pcl_perception/PeopleDetectionSrv.h"
+#include "pcl_detection/PeopleDetectionSrv.h"
  
 enum node_states {IDLE, DETECTING};
 int node_state = IDLE; 
@@ -97,8 +58,8 @@ bool visualize = false;
 bool calibrate_plane = false;
 
 const std::string data_topic = "nav_kinect/depth_registered/points"; 
-const std::string classifier_location = "/home/bwi/catkin_ws/src/bwi_experimental/pcl_perception/data/classifier.yaml";
-const std::string plane_coefs_location = "/home/bwi/catkin_ws/src/bwi_experimental/pcl_perception/data/ground_plane_avg.txt";
+const std::string classifier_location = "/home/marcus/ctk_ws/src/pcl_detection/data/classifier.yaml";
+const std::string plane_coefs_location = "/home/marcus/ctk_ws/src/pcl_detection/data/ground_plane_avg.txt";
 const std::string node_name = "segbot_people_detector";
 
 float min_confidence = -1.6;//-1.8;//-1.9
@@ -242,8 +203,8 @@ void calibrate_floor()
 	
 }
 
-bool service_callback(pcl_perception::PeopleDetectionSrv::Request  &req,
-         pcl_perception::PeopleDetectionSrv::Response &res)
+bool service_callback(pcl_detection::PeopleDetectionSrv::Request  &req,
+         pcl_detection::PeopleDetectionSrv::Response &res)
 {
 	ROS_INFO("Service requested with command: %s",req.command.c_str());
 	
@@ -412,7 +373,7 @@ bool service_callback(pcl_perception::PeopleDetectionSrv::Request  &req,
 		
 		
 		//group measurements into clusters
-		pcl_perception::Grouper3F G;
+		pcl_detection::Grouper3F G;
 		float dist_threshold = 0.3;
 		int min_group_size = 3;
 		for (unsigned int i = 0; i < measurements.size(); i ++){

@@ -1,4 +1,3 @@
-
 #include <cstdio>
 #include <vector>
 #include <string.h>
@@ -14,7 +13,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace pcl_perception {
+namespace pcl_detection {
 
 	class Group3F {
 		public:

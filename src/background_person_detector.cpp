@@ -1,8 +1,4 @@
 /*
- *
- * 
- * 
- * 
  * Implements the people detection algorithm described here:
  * M. Munaro, F. Basso and E. Menegatti,
  * Tracking people within groups with RGB-D data,
@@ -48,8 +44,6 @@ typedef pcl::PointCloud<PointT> PointCloudT;
 #include "utils/file_io.h"
 #include "utils/viz_utils.h" 
 #include "utils/pcl_utils.h"
- 
-
  
 //some constants
 bool visualize = false;
