@@ -47,11 +47,9 @@ typedef pcl::PointCloud<PointT> PointCloudT;
  
 //some constants
 bool visualize = false;
-bool calibrate_plane = false;
 
-const std::string data_topic = "nav_kinect/depth_registered/points"; 
-const std::string classifier_location = ros::package::getPath("pcl_perception") + "/classifier.yaml";
-const std::string node_name = "segbot_people_detector";
+const string data_topic = "nav_kinect/depth_registered/points"; 
+const string classifier_location = ros::package::getPath("pcl_detection") + "/data/classifier.yaml";
 
 //true if Ctrl-C is pressed
 bool g_caught_sigint=false;
@@ -59,9 +57,7 @@ bool g_caught_sigint=false;
 //refresh rate
 double ros_rate = 10.0;
 
-
 Eigen::VectorXf ground_coeffs;
-
 
 // Mutex: //
 boost::mutex cloud_mutex;
@@ -111,19 +107,19 @@ int main (int argc, char** argv)
 	nh.param<double>("background_person_detector/rate", ros_rate, 10.0);
 	
 	string param_out_frame_id;
-	nh.param<std::string>(std::string("background_person_detector/out_frame_id"), param_out_frame_id, "/map");
+	nh.param<string>(string("background_person_detector/out_frame_id"), param_out_frame_id, "/map");
 
 	string param_topic;
-	nh.param<std::string>(std::string("background_person_detector/rgbd_topic"), param_topic, data_topic);
+	nh.param<string>(string("background_person_detector/rgbd_topic"), param_topic, data_topic);
 	
 	string param_classifier;
-	nh.param<std::string>(std::string("background_person_detector/classifier_location"), 
+	nh.param<string>(string("background_person_detector/classifier_location"), 
 							param_classifier, 
-							ros::package::getPath("pcl_perception")+"/data/classifier.yaml");
+							ros::package::getPath("pcl_detection")+"/data/classifier.yaml");
 	
 	
 	string param_sensor_frame_id;
-	nh.param<std::string>(std::string("background_person_detector/sensor_frame_id"), 
+	nh.param<string>(string("background_person_detector/sensor_frame_id"), 
 							param_sensor_frame_id, 
 							"/nav_kinect_rgb_optical_frame");
 	
@@ -140,7 +136,7 @@ int main (int argc, char** argv)
 	ros::Subscriber sub = nh.subscribe (param_topic, 1, cloud_cb);
 
 	// Algorithm parameters:
-	std::string svm_filename = param_classifier;
+	string svm_filename = param_classifier;
 	float min_confidence = -1.5;//-1.9
 	float min_height = 1.3;
 	float max_height = 2.3;
@@ -153,7 +149,7 @@ int main (int argc, char** argv)
 
 	//load ground plane coeffs
 	ground_coeffs.resize(4);
-        std::string ground_plane_file, path_to_package, path; 
+        string ground_plane_file, path_to_package, path; 
 
         if (false == ros::param::has("~ground_plane_file")) {
             ROS_ERROR("ground_plane_file parameter needs to be set");
@@ -163,8 +159,8 @@ int main (int argc, char** argv)
             ros::param::get("~ground_plane_file", ground_plane_file); 
         }
 
-	string plane_coefs_location = ros::package::getPath("pcl_detection")+"/data/"+ground_plane_file;
-	ground_coeffs = load_vector_from_file(plane_coefs_location.c_str(),4);
+	ROS_INFO("Reading ground coefficients from \"%s\"", ground_plane_file.c_str());
+	ground_coeffs = load_vector_from_file(ground_plane_file.c_str(),4);
 	
 	// Initialize new viewer:
 	pcl::visualization::PCLVisualizer *viewer_display;          // viewer initialization
@@ -184,6 +180,7 @@ int main (int argc, char** argv)
 	people_detector.setClassifier(person_classifier);                // set person classifier
 	people_detector.setHeightLimits(min_height, max_height);         // set person classifier
 //  people_detector.setSensorPortraitOrientation(true);             // set sensor orientation to vertical
+	ROS_INFO("Initializing people detection...");
 
 	// For timing:
 	static unsigned count = 0;
@@ -211,8 +208,8 @@ int main (int argc, char** argv)
 			new_cloud_available_flag = false;
 
 			// Perform people detection on the new cloud:
-			std::vector<pcl::people::PersonCluster<PointT> > clusters;   // vector containing persons clusters
-			std::vector<pcl::people::PersonCluster<PointT> > clusters_filtered;
+			vector<pcl::people::PersonCluster<PointT> > clusters;   // vector containing persons clusters
+			vector<pcl::people::PersonCluster<PointT> > clusters_filtered;
 			people_detector.setInputCloud(cloud);
 			people_detector.setGround(ground_coeffs);    
 			
@@ -230,7 +227,7 @@ int main (int argc, char** argv)
 			
 			unsigned int k = 0;
 			//ROS_INFO("%lu people detected.", clusters.size());
-			for(std::vector<pcl::people::PersonCluster<PointT> >::iterator it = clusters.begin(); it != clusters.end(); ++it)
+			for(vector<pcl::people::PersonCluster<PointT> >::iterator it = clusters.begin(); it != clusters.end(); ++it)
 			{
 				if(it->getPersonConfidence() > min_confidence)             // draw only people with confidence above a threshold
 				{
@@ -291,21 +288,17 @@ int main (int argc, char** argv)
 						ROS_INFO("Person Cloud published.");
 				
 						//transforms the pose into /map frame
-						geometry_msgs::Pose pose_i;
-						pose_i.position.x=centroid_k(0);
-						pose_i.position.y=0.5;
-						pose_i.position.z=centroid_k(2);
-						pose_i.orientation = tf::createQuaternionMsgFromRollPitchYaw(0,0,-3.14/2);
-						
-						
 						geometry_msgs::PoseStamped stampedPose;
 
 						stampedPose.header.frame_id = param_sensor_frame_id;
 						stampedPose.header.stamp = ros::Time(0);
-						stampedPose.pose = pose_i;
+						stampedPose.pose.position.x = centroid_k(0);
+						stampedPose.pose.position.y = 0.5;
+						stampedPose.pose.position.z = centroid_k(2);
+						stampedPose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0,0,-3.14/2);
 						
 						geometry_msgs::PoseStamped stampOut;
-						listener.waitForTransform(param_sensor_frame_id, param_out_frame_id, ros::Time(0), ros::Duration(3.0)); 
+						listener.waitForTransform(param_sensor_frame_id, param_out_frame_id, ros::Time(0), ros::Duration(3.0));
 						listener.transformPose(param_out_frame_id, stampedPose, stampOut);
 
 						
@@ -317,13 +310,13 @@ int main (int argc, char** argv)
 						
 
 						stringstream ss;
-						ss << ros::package::getPath("pcl_perception") << "/data/human_kinect_" << nowTime.toNSec() << ".pcd";
+						ss << ros::package::getPath("pcl_detection") << "/data/human_kinect_" << nowTime.toNSec() << ".pcd";
 						pcl::io::savePCDFileASCII (ss.str(), *person_cloud);
 					
 						//save cloud in map frame of reference
 						pcl::fromROSMsg(person_cloud_ros,*person_cloud);
-						ss.str(std::string());
-						ss << ros::package::getPath("pcl_perception") << "/data/human_map_" << nowTime.toNSec() << ".pcd";
+						ss.str(string());
+						ss << ros::package::getPath("pcl_detection") << "/data/human_map_" << nowTime.toNSec() << ".pcd";
 						pcl::io::savePCDFileASCII (ss.str(), *person_cloud);
 						
 						stampOut.pose.position.z = 0.7;
