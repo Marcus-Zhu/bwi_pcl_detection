@@ -128,9 +128,9 @@ int main (int argc, char** argv)
 	
 	
 	//initialize marker publisher
-	ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("segbot_pcl_person_detector/marker", 10);
-	ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("segbot_pcl_person_detector/human_poses", 10);
-	ros::Publisher cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("segbot_pcl_person_detector/human_clouds", 10);
+	ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("pcl_detector/marker", 10);
+	ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pcl_detector/human_poses", 10);
+	ros::Publisher cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("pcl_detector/human_clouds", 10);
 	  
 	// Create a ROS subscriber for the input point cloud
 	ros::Subscriber sub = nh.subscribe (param_topic, 1, cloud_cb);
@@ -293,9 +293,10 @@ int main (int argc, char** argv)
 						stampedPose.header.frame_id = param_sensor_frame_id;
 						stampedPose.header.stamp = ros::Time(0);
 						stampedPose.pose.position.x = centroid_k(0);
-						stampedPose.pose.position.y = 0.5;
+						stampedPose.pose.position.y = centroid_k(1);
 						stampedPose.pose.position.z = centroid_k(2);
 						stampedPose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0,0,-3.14/2);
+						std::cout << param_sensor_frame_id << std::endl << stampedPose.pose.position << std::endl;
 						
 						geometry_msgs::PoseStamped stampOut;
 						listener.waitForTransform(param_sensor_frame_id, param_out_frame_id, ros::Time(0), ros::Duration(3.0));
@@ -308,22 +309,15 @@ int main (int argc, char** argv)
 						//save to file for analysis
 						ros::Time nowTime = ros::Time::now();
 						
-
-						stringstream ss;
-						ss << ros::package::getPath("pcl_detection") << "/data/human_kinect_" << nowTime.toNSec() << ".pcd";
-						pcl::io::savePCDFileASCII (ss.str(), *person_cloud);
-					
 						//save cloud in map frame of reference
 						pcl::fromROSMsg(person_cloud_ros,*person_cloud);
-						ss.str(string());
-						ss << ros::package::getPath("pcl_detection") << "/data/human_map_" << nowTime.toNSec() << ".pcd";
-						pcl::io::savePCDFileASCII (ss.str(), *person_cloud);
 						
-						stampOut.pose.position.z = 0.7;
+					    //stampOut.pose.position.z = 0.7;
 						stampOut.header.stamp = nowTime;
+						std::cout << param_out_frame_id << std::endl << stampOut.pose.position << std::endl;
 						
 						//publish the marker
-						visualization_msgs::Marker marker_k = create_next_person_marker(it,param_out_frame_id,"segbot_pcl_person_detector",detection_count);	
+						visualization_msgs::Marker marker_k = create_next_person_marker(stampOut,param_out_frame_id,"pcl_detector",detection_count);	
 						marker_k.pose = stampOut.pose;
 						marker_pub.publish(marker_k);
 						

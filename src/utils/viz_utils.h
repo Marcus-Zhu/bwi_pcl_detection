@@ -19,13 +19,10 @@
 #include <pcl/people/ground_based_people_detection_app.h>
 #include <pcl/common/time.h>
 
-visualization_msgs::Marker create_next_person_marker(std::vector<pcl::people::PersonCluster<PointT> >::iterator it, 
+visualization_msgs::Marker create_next_person_marker(geometry_msgs::PoseStamped stampOut, 
 					std::string frame_id,
 					std::string ns,
 					int k){
-	
-	Eigen::Vector3f centroid_k = it->getCenter();
-	Eigen::Vector3f bottom_k = it->getBottom();	
 	
 	visualization_msgs::Marker marker;
 	marker.header.frame_id = frame_id;
@@ -43,24 +40,18 @@ visualization_msgs::Marker create_next_person_marker(std::vector<pcl::people::Pe
 	marker.action = visualization_msgs::Marker::ADD;
 
 	// Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-	marker.pose.position.x = bottom_k(0);
-	marker.pose.position.y = 0.0;
-	marker.pose.position.z = bottom_k(2);
-	marker.pose.orientation.x = 0.0;
-	marker.pose.orientation.y = 0.0;
-	marker.pose.orientation.z = 1.0;
-	marker.pose.orientation.w = 0.0;
+	marker.pose = stampOut.pose;
 
 	// Set the scale of the marker -- 1x1x1 here means 1m on a side
-	marker.scale.x = 0.25;
-	marker.scale.y = 1.55;
-	marker.scale.z = 0.25;
+	marker.scale.x = 1.25;
+	marker.scale.y = 0.15;
+	marker.scale.z = 0.15;
 
 	// Set the color -- be sure to set alpha to something non-zero!
 	marker.color.r = 1.0f;
 	marker.color.g = 0.0f;
 	marker.color.b = 0.0f;
-	marker.color.a = 0.8;
+	marker.color.a = 0.6;
 
 	marker.lifetime = ros::Duration(0.0);
 
