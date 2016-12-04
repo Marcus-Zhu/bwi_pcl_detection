@@ -1,0 +1,10 @@
+<launch>
+
+<node pkg="pcl_detection" type="calibrate_floor" name="calibrate_floor" output="screen">
+
+	<param name="ground_coef_file" value="$(find pcl_detection)/data/segbot_v2_coef.txt" />
+	<param name="data_topic" value="nav_kinect/depth_registered/points" />
+
+</node>
+
+</launch>
