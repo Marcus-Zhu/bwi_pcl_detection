@@ -48,11 +48,12 @@ void write_vector_to_file(const char *filename, Eigen::VectorXf V, int n){
 
 void write_pos_to_file(const char *filename, geometry_msgs::PoseStamped stampOut){
 	std::ofstream file;
-	file.open(filename);
+	file.open(filename, std::ofstream::out | std::ofstream::app);
 	if (file.is_open()){
-		file << stampOut.header.stamp << '\t'
-			<< stampOut.header.frame_id << '\t'
-			<< stampOut.pose.position << endl;
+		file << stampOut.header.stamp << "\tx:"
+			<< stampOut.pose.position.x << "\ty:" 
+			<< stampOut.pose.position.y << "\tz:"
+			<< stampOut.pose.position.z << endl;
 		file.close();
 	}
 }

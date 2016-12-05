@@ -135,24 +135,24 @@ int main (int argc, char **argv)
     ros::init (argc, argv, "segbot_background_person_detector");
     ros::NodeHandle nh;
 
-    nh.param<bool>("~visualize", visualize, false);
-    nh.param<double>("~rate", ros_rate, 10.0);
-    nh.param<bool>("~write_to_file", write_to_file, true);
-    nh.param<string>(string("~record_file"), record_file,
+    nh.param<bool>("background_person_detector/visualize", visualize, false);
+    nh.param<double>("background_person_detector/rate", ros_rate, 10.0);
+    nh.param<bool>("background_person_detector/write_to_file", write_to_file, true);
+    nh.param<string>(string("background_person_detector/record_file"), record_file,
                      ros::package::getPath("pcl_detection") + "/data/record.txt");
 
     string param_out_frame_id;
-    nh.param<string>(string("~out_frame_id"), param_out_frame_id, "/map");
+    nh.param<string>(string("background_person_detector/out_frame_id"), param_out_frame_id, "/map");
 
     string param_topic;
-    nh.param<string>(string("~rgbd_topic"), param_topic, data_topic);
+    nh.param<string>(string("background_person_detector/rgbd_topic"), param_topic, data_topic);
 
     string param_classifier;
-    nh.param<string>(string("~classifier_location"), param_classifier,
+    nh.param<string>(string("background_person_detector/classifier_location"), param_classifier,
                      ros::package::getPath("pcl_detection") + "/data/classifier.yaml");
 
     string param_sensor_frame_id;
-    nh.param<string>(string("~sensor_frame_id"), param_sensor_frame_id,
+    nh.param<string>(string("background_person_detector/sensor_frame_id"), param_sensor_frame_id,
                      "/nav_kinect_rgb_optical_frame");
 
 
@@ -187,7 +187,7 @@ int main (int argc, char **argv)
     }
     else
     {
-        ros::param::get("~ground_plane_file", ground_plane_file);
+        ros::param::get("background_person_detector/ground_plane_file", ground_plane_file);
     }
 
     ROS_INFO("Reading ground coefficients from \"%s\"", ground_plane_file.c_str());

@@ -107,7 +107,7 @@ int main (int argc, char **argv)
     ros::init (argc, argv, "segbot_pcl_person_detector");
     ros::NodeHandle nh;
 
-    nh.param<std::string>("~data_topic", data_topic, "nav_kinect/depth_registered/points");
+    nh.param<std::string>("calibrate_floor/data_topic", data_topic, "nav_kinect/depth_registered/points");
     ros::Subscriber sub = nh.subscribe (data_topic, 1, cloud_cb);
 
     signal(SIGINT, sig_handler);
@@ -154,7 +154,7 @@ int main (int argc, char **argv)
     model_plane.computeModelCoefficients(clicked_points_indices, ground_coeffs);
 
     //save to file
-    nh.param<std::string>("~ground_coef_file", ground_coef_file, 
+    nh.param<std::string>("calibrate_floor/ground_coef_file", ground_coef_file, 
         ros::package::getPath("pcl_detection") + "/data/ground_coef.txt");
     write_vector_to_file(ground_coef_file.c_str(), ground_coeffs, 4);
 
