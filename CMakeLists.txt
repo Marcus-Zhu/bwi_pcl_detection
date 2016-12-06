@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(pcl_detection)
+project(person_detection)
 
 find_package(PCL 1.7 REQUIRED)
 
@@ -148,8 +148,8 @@ target_link_libraries(calibrate_floor ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 add_executable(person_detector src/person_detector.cpp)
 target_link_libraries(person_detector ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(cloudtest src/test.cpp)
-target_link_libraries(cloudtest ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBRARIES})
+#add_executable(cloudtest src/test.cpp)
+#target_link_libraries(cloudtest ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBRARIES})
 
 #############
 ## Install ##
