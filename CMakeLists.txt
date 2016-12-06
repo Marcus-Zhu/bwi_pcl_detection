@@ -145,8 +145,8 @@ target_link_libraries(calibrate_floor ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 #add_executable(main_ground_based_people_detection_demo src/main_ground_based_people_detection_demo.cpp)
 #target_link_libraries(main_ground_based_people_detection_demo ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(background_person_detector src/background_person_detector.cpp)
-target_link_libraries(background_person_detector ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(person_detector src/person_detector.cpp)
+target_link_libraries(person_detector ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(cloudtest src/test.cpp)
 target_link_libraries(cloudtest ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBRARIES})

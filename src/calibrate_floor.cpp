@@ -39,7 +39,7 @@ typedef pcl::PointXYZRGB PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 
 //some custom functions
-#include "utils/file_io.h"
+#include "file_io.h"
 
 std::string data_topic;
 std::string ground_coef_file;
