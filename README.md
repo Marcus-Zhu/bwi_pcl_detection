@@ -1,6 +1,6 @@
 # BWI Person Detection
 
-Person detection using pcl\_people module. Modified from [this example](http://pointclouds.org/documentation/tutorials/ground\_based\_rgbd\_people\_detection.php)
+Person detection using pcl\_people module. Modified from [this example](http://pointclouds.org/documentation/tutorials/ground\_based\_rgbd\_people\_detection.php).
 
 ## Launch Files
 
@@ -23,7 +23,6 @@ nav\_kinect/depth\_registered/points
 + pcl\_detector/human\_poses: geometry\_msgs/PoseStamped
 + pcl\_detector/human\_clouds: sensor\_msgs/PointCloud2
 
-![Visualization result of the marker topic](/figure/figure_2.png)
 ## Visualize
 
 Run `python scripts/visualization.py` to obtain a 2d heatmap using data from `data/record.txt`.
