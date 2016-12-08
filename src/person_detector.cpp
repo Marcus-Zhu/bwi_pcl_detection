@@ -50,7 +50,7 @@ string record_file;
 ofstream outfile;
 
 const string data_topic = "nav_kinect/depth_registered/points";
-const string classifier_location = ros::package::getPath("pcl_detection") + "/data/classifier.yaml";
+const string classifier_location = ros::package::getPath("person_detector") + "/data/classifier.yaml";
 
 //refresh rate
 double ros_rate = 10.0;
@@ -132,27 +132,27 @@ visualization_msgs::Marker create_marker(geometry_msgs::PoseStamped stampOut,
 int main (int argc, char **argv)
 {
     // Initialize ROS
-    ros::init (argc, argv, "segbot_background_person_detector");
+    ros::init (argc, argv, "segbot_person_detection");
     ros::NodeHandle nh;
 
-    nh.param<bool>("background_person_detector/visualize", visualize, false);
-    nh.param<double>("background_person_detector/rate", ros_rate, 10.0);
-    nh.param<bool>("background_person_detector/write_to_file", write_to_file, true);
-    nh.param<string>(string("background_person_detector/record_file"), record_file,
-                     ros::package::getPath("pcl_detection") + "/data/record.txt");
+    nh.param<bool>("person_detection/visualize", visualize, false);
+    nh.param<double>("person_detection/rate", ros_rate, 10.0);
+    nh.param<bool>("person_detection/write_to_file", write_to_file, true);
+    nh.param<string>(string("person_detection/record_file"), record_file,
+                     ros::package::getPath("person_detector") + "/data/record.txt");
 
     string param_out_frame_id;
-    nh.param<string>(string("background_person_detector/out_frame_id"), param_out_frame_id, "/map");
+    nh.param<string>(string("person_detection/out_frame_id"), param_out_frame_id, "/map");
 
     string param_topic;
-    nh.param<string>(string("background_person_detector/rgbd_topic"), param_topic, data_topic);
+    nh.param<string>(string("person_detection/rgbd_topic"), param_topic, data_topic);
 
     string param_classifier;
-    nh.param<string>(string("background_person_detector/classifier_location"), param_classifier,
-                     ros::package::getPath("pcl_detection") + "/data/classifier.yaml");
+    nh.param<string>(string("person_detection/classifier_location"), param_classifier,
+                     ros::package::getPath("person_detector") + "/data/classifier.yaml");
 
     string param_sensor_frame_id;
-    nh.param<string>(string("background_person_detector/sensor_frame_id"), param_sensor_frame_id,
+    nh.param<string>(string("person_detection/sensor_frame_id"), param_sensor_frame_id,
                      "/nav_kinect_rgb_optical_frame");
 
 
@@ -179,15 +179,10 @@ int main (int argc, char **argv)
     ground_coef.resize(4);
     string ground_plane_file, path_to_package, path;
 
-    if (false == ros::param::has("~ground_plane_file"))
-    {
+    if (!ros::param::get("person_detection/ground_plane_file", ground_plane_file)){
         ROS_ERROR("ground_plane_file parameter needs to be set");
         ros::shutdown();
         return -1;
-    }
-    else
-    {
-        ros::param::get("background_person_detector/ground_plane_file", ground_plane_file);
     }
 
     ROS_INFO("Reading ground coefficients from \"%s\"", ground_plane_file.c_str());

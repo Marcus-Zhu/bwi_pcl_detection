@@ -1,3 +1,4 @@
 data/
 
 !data/classifier.yaml
+!data/record_example.txt

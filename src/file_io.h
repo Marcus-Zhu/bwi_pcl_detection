@@ -50,9 +50,9 @@ void write_pos_to_file(const char *filename, geometry_msgs::PoseStamped stampOut
 	std::ofstream file;
 	file.open(filename, std::ofstream::out | std::ofstream::app);
 	if (file.is_open()){
-		file << stampOut.header.stamp << "\tx:"
-			<< stampOut.pose.position.x << "\ty:" 
-			<< stampOut.pose.position.y << "\tz:"
+		file << stampOut.header.stamp << "\t"
+			<< stampOut.pose.position.x << "\t" 
+			<< stampOut.pose.position.y << "\t"
 			<< stampOut.pose.position.z << endl;
 		file.close();
 	}

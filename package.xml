@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>person_detection</name>
+  <name>person_detector</name>
   <version>1.0.0</version>
   <description>BWI PCL Human Detection</description>
 
